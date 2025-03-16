@@ -1,0 +1,55 @@
+{% set name = "MitoScape" %}
+{% set version = "1.0" %}
+{% set sha256 = "03bc59ea2affcfc07ab4dd48c11c52b20d5ac8f15ebcf25b6d4bafeff434785a" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://github.com/larryns/{{ name }}/releases/download/v{{ version }}/{{ name }}-{{ version }}.jar
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+  noarch: generic
+  run_exports:
+    - {{ pin_subpackage('mitoscape', max_pin="x.x") }}
+
+requirements:
+  build:
+    - wget
+  run:
+    - openjdk >=8  #, <11
+
+test:
+  commands:
+    - mitoscape --help
+
+about:
+  home: https://github.com/larryns/MitoScape
+  license: Apache-2.0
+  summary: "MitoScape: A tool for mitochondrial DNA analysis using Apache Spark."
+  description: |
+    This MitoScape version can be executed with the command:
+    ```
+    mitoscape
+      --threads <number of threads>
+      --prob <classification probability>
+      --ld <path to mitomap.ld file>
+      --numt <path to NUMTs_hg38.txt file>
+      --classifier <path to MTClassifierModel.RF folder>
+      --prefix <prefix, see below for explanation>
+      --out <output prefix for bam file>
+    ```
+
+
+    `mitomap.ld`, `NUMTs_hg38.txt`, and `MTClassifierModel.RF` are provided in the package in the `$MITOSCAPE_DATA` folder.
+
+    The `prefix` matches the prefix of the bam filenames generated as explained 
+    [here](https://github.com/larryns/MitoScape#:~:text=is%20as%20follows%3A-,Alignment,-MitoScape%20was%20tested). 
+    MitoScape will look for `_MT_MD.bam` and `_NT.bam`.
+
+extra:
+  recipe-maintainers:
+    - tm4zza
